@@ -1,0 +1,56 @@
+customization:
+  distribution_code_name: Weasel
+  distribution_version: 0.14.3
+  generator: "Rime::SwitcherSettings"
+  modified_time: "Wed May 13 22:52:24 2020"
+  rime_version: 1.5.3
+patch:
+  # general options
+  menu/page_size: 5
+
+  # misc
+  show_notifications_when: appropriate
+
+  schema_list:
+    - schema: msdpy
+    - schema: numbers
+    - schema: wubi98
+
+  switcher:
+    caption: "选项"
+    option_list_separator: "/"
+    hotkeys:  # 可以以列表形式定义多个快捷键
+      - "Control+grave"  # Ctrl+`
+      - "Control+Shift+F8"
+    save_options:
+      - full_shape
+      - ascii_punct
+      - zht
+      - extended_charset
+      - gb2312
+      - gbk
+      - emoji_suggestion
+
+  ascii_composer/switch_key:
+    Caps_Lock: noop
+    Shift_L: commit_code
+    Shift_R: commit_code
+    Control_L: noop
+    Control_R: noop
+
+  # minus/减号，equal/等号，comma/逗号，period/句号，exclam/感叹号，numbersign/井号，percent/百分号，semicolon/分号，apostrophe/单引号
+  key_binder:
+    bindings:
+      - {accept: Shift+space, toggle: full_shape, when: always}
+      # - {accept: comma, send: Page_Up, when: paging}
+      - {accept: comma, send: Page_Up, when: has_menu}
+      - {accept: period, send: Page_Down, when: has_menu}
+      - {accept: "Control+j", send: Down, when: has_menu}
+      - {accept: "Control+k", send: Up, when: has_menu}
+      - {accept: "Control+h", send: Left, when: has_menu}
+      - {accept: "Control+l", send: Right, when: has_menu}
+      - {accept: Tab, send: "Shift+Right", when: composing}
+      # - {accept: Control+Control_L, send: 2, when: has_menu}
+      # - {accept: Control+Control_R, send: 3, when: has_menu}
+      # - {accept: semicolon, send: 2, when: has_menu}
+      # - {accept: apostrophe, send: 3, when: has_menu}

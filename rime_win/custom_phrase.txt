@@ -1,0 +1,11 @@
+# 英文缩写
+Rime	rime	3
+中州韵	rime	2
+小狼毫	rime	1
+GitHub	git
+CPU	cpu
+Microsoft	mics
+
+# 词组简拼
+中华人民共和国	vhrg
+义勇军进行曲	yyjq

@@ -1,0 +1,238 @@
+# Rime schema
+# encoding: utf-8
+
+schema:
+  schema_id: msdpy
+  name: 微软双拼
+  version: "1.0"
+  author:
+    - C
+  description: |
+    微软双拼方案，按自己的习惯修改了。
+  dependencies:
+    - liangfen
+    - wubi98
+    - engl
+    - fzm
+
+switches:
+  - name: ascii_mode
+    reset: 0
+    states: ["中", "英"]
+  - name: full_shape
+    reset: 0
+    states: ["半角", "全角"]
+  - name: simplification
+    reset: 0
+    states: ["简", "繁"]
+  - name: ascii_punct
+    states: ["，。", ",."]
+  - name: emoji_suggestion
+    reset: 0
+    states: [ "E0", "E1" ]
+
+
+
+engine:
+  processors:
+    - lua_processor@select_character_processor # 以词定字
+    - ascii_composer
+    - recognizer
+    - key_binder
+    - speller
+    - punctuator
+    - selector
+    - navigator
+    - express_editor
+  segmentors:
+    - ascii_segmentor
+    - matcher
+    - affix_segmentor@liangfen
+    - affix_segmentor@wubi98
+    - abc_segmentor
+    - punct_segmentor
+    - fallback_segmentor
+  translators:
+    - punct_translator
+    - script_translator
+    - lua_translator@date_translator
+    - lua_translator@week_translator
+    - lua_translator@number_translator # U+数字转大写
+    - script_translator@liangfen
+    - table_translator@wubi98
+    - table_translator@english
+    - table_translator@fzm
+    - table_translator@custom_phrase
+  filters:
+    # - lua_filter@single_char_first_filter
+    # - lua_filter@limit_multi_char_word_filter
+    - lua_filter@charset_filter # 滤除CJK扩展汉字的候选项
+    # - lua_filter@charset_comment_filter
+    - simplifier
+    - simplifier@emoji_suggestion
+    - uniquifier
+    - reverse_lookup_filter@fzm_lookup
+
+speller:
+  alphabet: zyxwvutsrqponmlkjihgfedcba;ZYXWVUTSRQPONMLKJIHGFEDCBA
+  initials: zyxwvutsrqponmlkjihgfedcbaZYXWVUTSRQPONMLKJIHGFEDCBA
+  delimiter: " '"
+  algebra:
+    - erase/^xx$/
+    # - xform/^([b-df-hj-z])$/$1_/
+    - derive/^([jqxy])u$/$1v/
+    - xform/^([aoe].*)$/o$1/
+    - xform/iu$/ʠ/
+    - xform/[iu]a$/ŵ/
+    - xform/er$|[uv]an$/ȓ/
+    - xform/[uv]e$/ẗ/
+    - xform/v$|uai$/ŷ/
+    - xform/^sh/ǔ/
+    - xform/^ch/ǐ/
+    - xform/^zh/ṽ/
+    - xform/uo$/ǒ/
+    - xform/[uv]n$/ṕ/
+    - xform/i?ong$/š/
+    - xform/[iu]ang$/ď/
+    - xform/(.)en$/$1ƒ/
+    - xform/(.)eng$/$1ğ/
+    - xform/(.)ang$/$1ȟ/
+    - xform/ian$/ṁ/
+    - xform/(.)an$/$1ǰ/
+    - xform/iao$/č/
+    - xform/(.)ao$/$1ǩ/
+    - xform/(.)ai$/$1ĺ/
+    - xform/(.)ei$/$1ž/
+    - xform/ie$/ẍ/
+    - xform/ui$/ṽ/
+    - derive/T$/ṽ/
+    - xform/(.)ou$/$1ƀ/
+    - xform/in$/ñ/
+    - xform/ing$/;/
+    - xlit/ʠŵȓẗŷǔǐǒṕšďƒğȟṁǰčǩĺžẍṽƀñ/qwrtyuiopsdfghmjcklzxvbn/
+    # - abbrev/^(.).+$/$1/
+
+translator:
+  # dictionary: luna_pinyin
+  dictionary: mygeneral #词库
+  initial_quality: 1 #设定此翻译器出字优先级
+  prism: msdpy
+  enable_completion: false
+  # enable_correction: true #在手机同文输入法上可以开启
+  # preedit_format: {} #双拼不自动展开为全拼
+  # preedit_format:
+    # - xform/([aoe])(\w)/0$2/
+    # - xform/([bpmnljqxy])n/$1in/
+    # - xform/(\w)g/$1eng/
+    # - xform/(\w)q/$1iu/
+    # - xform/([gkhvuirzcs])w/$1ua/
+    # - xform/(\w)w/$1ia/
+    # - xform/([dtnlgkhjqxyvuirzcs])r/$1uan/
+    # - xform/0r/er/
+    # - xform/([dtgkhvuirzcs])v/$1ui/
+    # - xform/(\w)v/$1ve/
+    # - xform/(\w)t/$1ve/
+    # - xform/([gkhvuirzcs])y/$1uai/
+    # - xform/(\w)y/$1v/
+    # - xform/([dtnlgkhvuirzcs])o/$1uo/
+    # - xform/(\w)p/$1un/
+    # - xform/([jqx])s/$1iong/
+    # - xform/(\w)s/$1ong/
+    # - xform/([jqxnl])d/$1iang/
+    # - xform/(\w)d/$1uang/
+    # - xform/(\w)f/$1en/
+    # - xform/(\w)h/$1ang/
+    # - xform/(\w)j/$1an/
+    # - xform/(\w)k/$1ao/
+    # - xform/(\w)l/$1ai/
+    # - xform/(\w)z/$1ei/
+    # - xform/(\w)x/$1ie/
+    # - xform/(\w)c/$1iao/
+    # - xform/(\w)b/$1ou/
+    # - xform/(\w)m/$1ian/
+    # - xform/(\w);/$1ing/
+    # - xform/0(\w)/$1/
+    # - "xform/(^|[ '])v/$1zh/"
+    # - "xform/(^|[ '])i/$1ch/"
+    # - "xform/(^|[ '])u/$1sh/"
+    # - xform/([jqxy])v/$1u/
+    # - xform/([nl])v/$1ü/
+
+simplifier:
+  opencc_config: s2t.json
+
+
+liangfen:
+  tag: liangfen
+  dictionary: liangfen
+  prefix: "o`"
+  suffix: "'"
+  tips: 〔两分〕
+  enable_completion: true
+  preedit_format:
+    - "xlit|v|ü|"
+    - xform/iü/iv/
+    - xform/uü/uv/
+  comment_format:
+    - "xlit|v|ü|"
+    - xform/iü/iv/
+    - xform/uü/uv/
+
+wubi98:
+  tag: wubi98
+  dictionary: wubi98
+  prefix: "`"
+  suffix: ";"
+  tips: 〔五笔〕
+  enable_completion: true
+  preedit_format:
+    # - xlit/hspnz/一丨丿丶乙/
+
+fzm_lookup:
+  tags: [ liangfen, wubi98 ]
+  # dictionary: mygeneral
+  dictionary: fzm
+  overwrite_comment: false
+
+punctuator:
+  import_preset: mysymbols #自定义标点和符号
+
+key_binder:
+  import_preset: default
+
+recognizer:
+  import_preset: default
+  patterns:
+    punct: "^\\\\([A-Z|a-z]*|[0-9]|10)$"  #mysymbols中的各种特殊符号的输入，四个\是出于正则表达式需要
+    liangfen: "^o`[a-z]*'?$"
+    wubi98: "^`[a-z]*'?$"
+
+
+# 英语
+english:
+  dictionary: engl
+  spelling_hints: 9
+  enable_completion: true
+  enable_sentence: false
+  initial_quality: 0
+
+# 自定义短语
+custom_phrase:
+  dictionary: ""
+  user_dict: custom_phrase
+  db_class: stabledb
+  enable_completion: false
+  enable_sentence: false
+  initial_quality: 1
+
+# 辅助码
+fzm:
+  dictionary: fzm
+  enable_completion: false
+  enable_sentence: false
+  initial_quality: 0
+
+emoji_suggestion:
+  opencc_config: emoji.json
+  option_name: emoji_suggestion
+  tips: all

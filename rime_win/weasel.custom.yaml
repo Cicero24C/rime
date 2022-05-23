@@ -1,0 +1,30 @@
+customization:
+  distribution_code_name: Weasel
+  distribution_version: 0.14.3
+  generator: "Weasel::UIStyleSettings"
+  modified_time: "Fri May 15 14:08:58 2020"
+  rime_version: 1.5.3
+patch:
+  # style/display_tray_icon: false
+  style/font_face: "Microsoft YaHei"
+  style/font_point: 13
+  style/inline_preedit: false
+  style/preedit_type: composition
+  style/fullscreen: false
+  style/layout/border: 0
+  style/layout/margin_x: 12
+  style/layout/margin_y: 12
+  style/layout/spacing: 12
+  style/layout/candidate_spacing: 5
+  app_options/totalcmd.exe:
+    ascii_mode: true
+  app_options/conemu64.exep:
+    ascii_mode: true
+
+  # style/color_scheme: aqua
+  # style/color_scheme: azure
+  # style/color_scheme: google
+  # style/color_scheme: nba
+  # style/color_scheme: modern_warfare
+  # style/color_scheme: starcraft_ii
+  style/color_scheme: metroblue

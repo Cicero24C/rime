@@ -1,0 +1,138 @@
+schema:
+  schema_id: wubi98
+  name: "五笔"
+  version: "0.1"
+  author:
+    - 发明人：王永民
+  description: |
+    98五笔字型单字版
+    按 z 键进入拼音反查
+  dependencies:
+    - fzm
+
+switches:
+  - name: ascii_mode
+    reset: 1
+    states: [ 中, 英 ]
+  - name: zht
+    # reset: 0
+    states: [ 简, 繁 ]
+  # - name: extended_charset
+  #   states: [ 常, 扩 ]
+  - options: [gbk, gb2312, utf8]
+    # reset: 0
+    states:
+      - GBK
+      - GB2312
+      - UTF-8
+  - name: ascii_punct
+    states: [ 。，, ．， ]
+  - name: full_shape
+    reset: 0
+    # states: [ 半, 全 ]
+  - name: emoji_suggestion
+    # reset: 0
+    states: [ "E0", "E1" ]
+
+
+engine:
+  processors:
+    - ascii_composer
+    - recognizer
+    - key_binder
+    - speller
+    - punctuator
+    - selector
+    - navigator
+    - express_editor
+  segmentors:
+    - ascii_segmentor
+    - matcher
+    - affix_segmentor@mkst
+    - abc_segmentor
+    - punct_segmentor
+    - fallback_segmentor
+  translators:
+    - history_translator
+    - punct_translator
+    - reverse_lookup_translator
+    - table_translator
+    - table_translator@mkst
+    - lua_translator@date_translator
+    - lua_translator@number_translator # U+数字转大写
+  filters:
+    - charset_filter@gb2312
+    - charset_filter@gbk
+    - uniquifier
+    - simplifier
+    - simplifier@zht
+    - simplifier@emoji_suggestion
+
+speller:
+  auto_select: true
+  max_code_length: 4
+  auto_clear: max_length
+  # auto_clear: auto
+  delimiter: "`"
+
+history:
+  input: hz
+  size: 1
+
+zht:
+  opencc_config: s2t.json
+  option_name: zht
+
+
+translator:
+  dictionary: wubi98
+  initial_quality: 99999
+  enable_charset_filter: true
+  enable_encoder: true
+  encode_commit_history: false
+  enable_completion: false
+  enable_sentence: false
+  enable_user_dict: true
+  # db_class: tabledb
+  max_phrase_length: 4
+  disable_user_dict_for_patterns:
+    - "^z.*$"
+    - "^[a-y]{1,2}$"
+
+mkst:
+  __include: /translator
+  initial_quality: 10
+  enable_sentence: true
+  prefix: '`'
+  tips: "【精准造词】"
+  tag: mkst
+
+reverse_lookup:
+  dictionary: fzm
+  prefix: "z"
+  suffix: "'"
+  tips: "〔反查〕"
+  preedit_format:
+  comment_format:
+    # 让反查结果只显示最长的一个，如“你”字只显示 "wqiy"，而不是 "wq wqi wqiy"
+    - xform/^(\S+\s)*(\S+)$/$2/
+
+recognizer:
+  import_preset: default
+  patterns:
+    reverse_lookup: "^z[a-z;]*$"
+    mkst: "^[a-y]*`[a-y`]*$"
+    punct: "^\\\\([A-Z|a-z]*|[0-9]|10)$"
+
+punctuator:
+  import_preset: mysymbols
+
+key_binder:
+  import_preset: default
+  bindings:
+    - { when: has_menu, accept: semicolon, send: 2 }
+
+emoji_suggestion:
+  opencc_config: emoji.json
+  option_name: emoji_suggestion
+  tips: all
